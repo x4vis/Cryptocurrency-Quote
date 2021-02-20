@@ -1,9 +1,23 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, Image, View } from 'react-native';
 import Formulario from './components/Formulario';
 import Header from './components/Header';
+import axios from 'axios';
 
 const App = () => {
+
+  const [moneda, setMoneda] = useState('');
+  const [cripto, setCripto] = useState('');
+  const [consultarAPI, setConsultarAPI] = useState(false);
+
+  useEffect(() => {
+    const consulta = async () => {
+      const url = `https://min-api.cryptocompare.com/data/pricemulti?fsyms=BTC,ETH&tsyms=USD,EUR`;
+      const respuesta = await axios.get(url);
+      console.log('respuesta :>> ', respuesta);
+    }
+  }, [consultarAPI])
+
   return (
     <>
       <Header />
@@ -12,7 +26,11 @@ const App = () => {
              source={require('./assets/img/cryptomonedas.png')} />
       
       <View style={styles.contenido}>
-        <Formulario />
+        <Formulario moneda={moneda}
+                    setMoneda={setMoneda}
+                    cripto={cripto}
+                    setCripto={setCripto}
+                    setConsultarAPI={setConsultarAPI} />
       </View>
 
     </>
