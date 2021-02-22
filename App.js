@@ -3,19 +3,25 @@ import { StyleSheet, Image, View } from 'react-native';
 import Formulario from './components/Formulario';
 import Header from './components/Header';
 import axios from 'axios';
+import Cotizacion from './components/Cotizacion';
 
 const App = () => {
 
   const [moneda, setMoneda] = useState('');
   const [cripto, setCripto] = useState('');
   const [consultarAPI, setConsultarAPI] = useState(false);
+  const [resultado, setResultado] = useState({});
 
   useEffect(() => {
-    const consulta = async () => {
-      const url = `https://min-api.cryptocompare.com/data/pricemulti?fsyms=BTC,ETH&tsyms=USD,EUR`;
-      const respuesta = await axios.get(url);
-      console.log('respuesta :>> ', respuesta);
+    if (consultarAPI) {
+      const consulta = async () => {
+        const url = `https://min-api.cryptocompare.com/data/pricemultifull?fsyms=${cripto}&tsyms=${moneda}`;
+        const result = await axios.get(url);
+        setResultado(result.data.DISPLAY[cripto][moneda]);
+      }
+      consulta();
     }
+
   }, [consultarAPI])
 
   return (
@@ -31,6 +37,8 @@ const App = () => {
                     cripto={cripto}
                     setCripto={setCripto}
                     setConsultarAPI={setConsultarAPI} />
+
+        <Cotizacion resultado={resultado}/>
       </View>
 
     </>

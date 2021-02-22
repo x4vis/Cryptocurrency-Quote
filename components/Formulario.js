@@ -8,19 +8,10 @@ const Formulario = ({moneda, setMoneda, cripto, setCripto, setConsultarAPI}) => 
   const [criptomonedas, setCriptomonedas] = useState([]);
 
   useEffect(() => {
-    const consultarAPI = () => {
-
-      fetch('https://min-api.cryptocompare.com/data/top/mktcapfull?limit=10&tsym=USD')
-      .then(resp => resp.json())
-      .then(resp => {
-        console.log(resp)
-      })
-      .catch(err => console.log('error :>> ', err))
-
-      // const url = `https://min-api.cryptocompare.com/data/top/mktcapfull?limit=10&tsym=USD`;
-      // const result = await axios.get(url);
-      // console.log('resulta.data.Data :>> ', resulta.data.Data);
-      // setCriptomonedas(result.data.Data);
+    const consultarAPI = async () => {
+      const url = 'https://min-api.cryptocompare.com/data/top/mktcapfull?limit=10&tsym=USD';
+      const result = await axios.get(url);
+      setCriptomonedas(result.data.Data);
     }
 
     consultarAPI();
