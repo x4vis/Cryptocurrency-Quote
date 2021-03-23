@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Image, View } from 'react-native';
+import { StyleSheet, Image, View, ScrollView, ActivityIndicator } from 'react-native';
 import Formulario from './components/Formulario';
 import Header from './components/Header';
 import axios from 'axios';
@@ -11,25 +11,35 @@ const App = () => {
   const [cripto, setCripto] = useState('');
   const [consultarAPI, setConsultarAPI] = useState(false);
   const [resultado, setResultado] = useState({});
+  const [cargando, setCargando] = useState(false);
 
   useEffect(() => {
     if (consultarAPI) {
       const consulta = async () => {
         const url = `https://min-api.cryptocompare.com/data/pricemultifull?fsyms=${cripto}&tsyms=${moneda}`;
         const result = await axios.get(url);
-        setResultado(result.data.DISPLAY[cripto][moneda]);
+        setCargando(true);
+        
+        //Ocultar el spinner y mostrar el resultado
+        setTimeout(() => {
+          setResultado(result.data.DISPLAY[cripto][moneda]);
+          setConsultarAPI(false);
+          setCargando(false);
+        }, 2000);
       }
       consulta();
     }
 
   }, [consultarAPI])
 
+  const componente = cargando ? <ActivityIndicator size='large' color='#5E49E2'/> : <Cotizacion resultado={resultado}/>;
+
   return (
-    <>
+    <ScrollView>
       <Header />
 
       <Image style={styles.imagen} 
-             source={require('./assets/img/cryptomonedas.png')} />
+            source={require('./assets/img/cryptomonedas.png')} />
       
       <View style={styles.contenido}>
         <Formulario moneda={moneda}
@@ -38,10 +48,12 @@ const App = () => {
                     setCripto={setCripto}
                     setConsultarAPI={setConsultarAPI} />
 
-        <Cotizacion resultado={resultado}/>
       </View>
 
-    </>
+      <View style={{ marginTop: 40 }}>
+        { componente }
+      </View>
+    </ScrollView>
   );
 };
 
